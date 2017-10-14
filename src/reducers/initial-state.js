@@ -2,6 +2,7 @@ export default {
   members: [
     {
       id: 1,
+      avatar: null,
       firstName: "Pramjeet",
       lastName: "Ahlawat",
       phoneNumber: "+91 912 34 56789",
@@ -10,6 +11,7 @@ export default {
     },
     {
       id: 2,
+      avatar: null,
       firstName: "Lalit",
       lastName: "Patel",
       phoneNumber: "+91 912 34 56789",

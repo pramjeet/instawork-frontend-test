@@ -3,10 +3,24 @@ import { connect } from "react-redux";
 import MembersList from "../components/members-list";
 import EditMember from "../components/edit-member";
 
+const getMemberToEdit = state => {
+  if (!state.memberIdToEdit) {
+    return null;
+  }
+
+  for (let i = 0; i < state.members.length; i++) {
+    if (state.members[i].id === state.memberIdToEdit) {
+      return state.members[i];
+    }
+  }
+};
+
 const mapStateToProps = state => {
   return {
     members: state.members,
-    memberIdToEdit: state.memberIdToEdit
+    memberIdToEdit: state.memberIdToEdit,
+    isNewMemberFormOpen: state.isNewMemberFormOpen,
+    memberToEdit: getMemberToEdit(state)
   };
 };
 
@@ -19,6 +33,27 @@ const mapDispatchToProps = dispatch => {
           memberIdToEdit: id
         }
       });
+    },
+    toggleNewMemberForm: () => {
+      dispatch({
+        type: "TOGGLE_NEW_MEMBER_FORM"
+      });
+    },
+    saveMember: member => {
+      dispatch({
+        type: "SAVE_MEMBER",
+        payload: {
+          member: member
+        }
+      });
+    },
+    addMember: member => {
+      dispatch({
+        type: "ADD_NEW_MEMBER",
+        payload: {
+          member: member
+        }
+      });
     }
   };
 };
@@ -27,32 +62,82 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        <div className="members-list-container">
-          <div className="list-header">
-            <h1 className="list-title">
-              Team Members
-              <p className="small text-muted">Click an item to edit</p>
-            </h1>
-            <button className="btn btn-sm btn-primary">+</button>
-          </div>
-          <MembersList
-            onItemClick={(id, e) => this.props.selectMemberIdToEdit(id)}
-            members={this.props.members}
-          />
-          {this.props.memberIdToEdit && (
-            <div className="edit-member-container">edit container</div>
+        {!this.props.memberIdToEdit &&
+          !this.props.isNewMemberFormOpen && (
+            <div className="members-list-container">
+              <div className="list-header">
+                <h1 className="list-title">
+                  Team members
+                  <p className="small text-muted">Click an item to edit</p>
+                </h1>
+                <button
+                  onClick={this.props.toggleNewMemberForm}
+                  className="btn btn-sm btn-primary"
+                >
+                  +
+                </button>
+              </div>
+              <MembersList
+                onItemClick={(id, e) => this.props.selectMemberIdToEdit(id)}
+                members={this.props.members}
+              />
+            </div>
           )}
-        </div>
+        {this.props.memberIdToEdit && (
+          <div className="edit-member-container">
+            <div className="list-header">
+              <h1 className="list-title">
+                Edit team member
+                <p className="small text-muted">
+                  Edit name, contact info and role
+                </p>
+              </h1>
+              <button
+                onClick={e => this.props.selectMemberIdToEdit(null)}
+                className="btn btn-sm btn-danger"
+              >
+                X
+              </button>
+            </div>
+            <EditMember
+              onSave={member => {
+                this.props.saveMember(member);
+                this.props.selectMemberIdToEdit(null);
+              }}
+              {...this.props.memberToEdit}
+            />
+          </div>
+        )}
+        {this.props.isNewMemberFormOpen && (
+          <div className="new-member-container">
+            <div className="list-header">
+              <h1 className="list-title">
+                Add a team member
+                <p className="small text-muted">
+                  Set name, contact info and role
+                </p>
+              </h1>
+              <button
+                onClick={this.props.toggleNewMemberForm}
+                className="btn btn-sm btn-danger"
+              >
+                X
+              </button>
+            </div>
+            <EditMember
+              onSave={member => {
+                this.props.addMember(member);
+                this.props.toggleNewMemberForm();
+              }}
+            />
+          </div>
+        )}
         <style jsx>{`
           .app {
             width: 100%;
             height: 100%;
             max-width: 400px;
-            margin: auto;
-            padding: 20px 10px;
-          }
-
-          .members-list-container {
+            margin: 20px auto;
             border-radius: 3px;
             background-color: #fff;
             box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
