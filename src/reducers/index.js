@@ -19,18 +19,27 @@ export default function(state = initialState, action) {
       };
 
     case "SAVE_MEMBER":
-      const memberToChange = action.payload.member;
-      let members = state.members.map(member => {
-        if (member.id === memberToChange.id) {
-          return memberToChange;
-        } else {
-          return member;
-        }
-      });
-
       return {
         ...state,
-        members: members
+        members: state.members.map(member => {
+          if (member.id === action.payload.member.id) {
+            return action.payload.member;
+          } else {
+            return member;
+          }
+        })
+      };
+
+    case "DELETE_MEMBER":
+      return {
+        ...state,
+        members: state.members.filter(member => {
+          if (member.id === action.payload.memberId) {
+            return false;
+          } else {
+            return true;
+          }
+        })
       };
 
     case "MEMBER_ID_TO_EDIT":

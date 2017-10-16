@@ -84,16 +84,31 @@ class EditMember extends Component {
             </select>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block save-btn">
-            Save
-          </button>
+          <div className="btns clearfix">
+            {this.props.id && (
+              <button
+                onClick={e => this.props.onDelete(this.props.id)}
+                type="button"
+                className="btn btn-danger delete-btn pull-left"
+              >
+                Delete
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn-primary save-btn pull-right"
+            >
+              Save Changes
+            </button>
+          </div>
         </form>
         <style jsx>{`
           form {
             padding: 20px;
           }
 
-          .save-btn {
+          .btns {
             margin-top: 40px;
           }
         `}</style>

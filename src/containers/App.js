@@ -47,6 +47,14 @@ const mapDispatchToProps = dispatch => {
         }
       });
     },
+    deleteMember: memberId => {
+      dispatch({
+        type: "DELETE_MEMBER",
+        payload: {
+          memberId: memberId
+        }
+      });
+    },
     addMember: member => {
       dispatch({
         type: "ADD_NEW_MEMBER",
@@ -68,7 +76,9 @@ class App extends Component {
               <div className="list-header">
                 <h1 className="list-title">
                   Team members
-                  <p className="small text-muted">Click an item to edit</p>
+                  <p className="small text-muted">
+                    You have {this.props.members.length} team members
+                  </p>
                 </h1>
                 <button
                   onClick={this.props.toggleNewMemberForm}
@@ -100,6 +110,10 @@ class App extends Component {
               </button>
             </div>
             <EditMember
+              onDelete={memberId => {
+                this.props.deleteMember(memberId);
+                this.props.selectMemberIdToEdit(null);
+              }}
               onSave={member => {
                 this.props.saveMember(member);
                 this.props.selectMemberIdToEdit(null);
